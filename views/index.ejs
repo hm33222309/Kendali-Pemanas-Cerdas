@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kontrol Suhu Cerdas MQTT</title>
+    <link rel="stylesheet" href="stylesheets/style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>Kontrol Suhu Cerdas (PSO/ GA/ PID Konvensional) 🌡️</h1>
+        <div class="status-indicator" id="mqtt-status">
+          <span class="dot disconnected"></span> OFFLINE
+        </div>
+      </header>
+
+      <main>
+        <div class="control-panel">
+          <h2>Panel Kontrol</h2>
+
+          <div class="form-group">
+            <label for="method">Metode Kontrol</label>
+            <select id="method">
+              <option value="pso" selected>
+                PSO (Particle Swarm Optimization)
+              </option>
+              <option value="ga">GA (Genetic Algorithm)</option>
+              <option value="conventional">PID Konvensional</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="setpoint">Setpoint (°C)</label>
+            <input type="number" id="setpoint" value="65.0" step="0.5" />
+          </div>
+          <div class="form-group">
+            <label for="duration">Durasi (detik)</label>
+            <input type="number" id="duration" value="60" />
+          </div>
+
+          <div class="form-group">
+            <label for="fitness">Kriteria Fitness (PSO/GA)</label>
+            <select id="fitness">
+              <option value="ITAE" selected>ITAE</option>
+              <option value="IAE">IAE</option>
+              <option value="ISE">ISE</option>
+              <option value="ITSE">ITSE</option>
+            </select>
+          </div>
+
+          <h2>Parameter PID Kovensional</h2>
+          <div class="form-group-3">
+              <label for="conv_kp">Kp</label>
+              <input type="number" id="conv_kp" value="7.5" step="1" />
+              <label for="conv_ki">Ki</label>
+              <input type="number" id="conv_ki" value="1.75" step="0.1" />
+              <label for="conv_kd">Kd</label>
+              <input type="number" id="conv_kd" value="5.25" step="1" />
+          </div>
+
+          <h2>Batas Parameter PSO/GA</h2>
+          <div class="form-group-2">
+            <div class="input-wrapper">
+              <label for="kp_min">Kp Min</label>
+              <input type="number" id="kp_min" value="6.0" step="1" />
+            </div>
+            <div class="input-wrapper">
+              <label for="kp_max">Kp Max</label>
+              <input type="number" id="kp_max" value="9.0" step="1"/>
+            </div>
+          </div>
+          <div class="form-group-2">
+            <div class="input-wrapper">
+              <label for="ki_min">Ki Min</label>
+              <input type="number" id="ki_min" value="0.5" step="0.1" />
+            </div>
+            <div class="input-wrapper">
+              <label for="ki_max">Ki Max</label>
+              <input type="number" id="ki_max" value="3.0" step="0.1" />
+            </div>
+          </div>
+          <div class="form-group-2">
+            <div class="input-wrapper">
+              <label for="kd_min">Kd Min</label>
+              <input type="number" id="kd_min" value="3.5" step="1" />
+            </div>
+            <div class="input-wrapper">
+              <label for="kd_max">Kd Max</label>
+              <input type="number" id="kd_max" value="7.0" step="1" />
+            </div>
+          </div>
+        </div>
+
+        <div class="monitoring-panel">
+          <div class="judul">
+            <h2>Monitor Real-Time</h2>
+          <div class="log-item">
+            <strong>Status:</strong> <span id="log-status">IDLE</span>
+          </div>
+          </div>
+          <div class="card-container">
+            <div class="card">
+              <h3>Suhu Aktual</h3>
+              <p id="temp-value">-- °C</p>
+            </div>
+            <div class="card">
+              <h3>Setpoint</h3>
+              <p id="sp-value">-- °C</p>
+            </div>
+            <div class="card">
+              <h3>Output PWM</h3>
+              <p id="pwm-value">--</p>
+            </div>
+            <div class="card">
+              <h3>Waktu Berjalan</h3>
+              <p id="time-value">-- s</p>
+            </div>
+            <div class="card">
+              <h3>Metode</h3>
+              <p id="log-method">--</p>
+            </div>
+            <div class="card">
+              <h3>Kp</h3>
+              <p id="log-kp">--</p>
+            </div>
+            <div class="card">
+              <h3>Ki</h3>
+              <p id="log-ki">--</p>
+            </div>
+            <div class="card">
+              <h3>Kd</h3>
+              <p id="log-kd">--</p>
+            </div>
+            <div class="card">
+              <h3>Rise Time</h3>
+              <p id="rise-time-value">-- s</p>
+            </div>
+            <div class="card">
+              <h3>Settling Time</h3>
+              <p id="settling-time-value">-- s</p>
+            </div>
+            <div class="card">
+              <h3>Overshoot</h3>
+              <p id="overshoot-value">--%</p>
+            </div>
+            <div class="card">
+              <h3>SS Error</h3>
+              <p id="ss-error-value">--°C</p>
+            </div>
+          </div>
+          <h2>Grafik Hasil</h2>
+          <div class="chart-container">
+            <canvas id="temp-chart"></canvas>
+          </div>
+          <div class="button-group">
+            <button id="btn-start" class="btn btn-start">▶ Mulai Proses</button>
+            <button id="btn-stop" class="btn btn-stop" disabled>
+              ■ Hentikan Proses
+            </button>
+          </div>
+          <div class="button-group">
+            <button id="btn-update" class="btn btn-update" enable>
+              Update Pengaturan Batas Parameter
+            </button>
+          </div>  
+          <div class="button-group">
+            <button id="btn-csv" class="btn btn-csv">
+              Download CSV File
+            </button>
+          </div>  
+        </div>
+      </main>
+
+    </div>
+     <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+    <script src="javascripts/script.js"></script>
+  </body>
+</html>
