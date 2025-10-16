@@ -139,7 +139,7 @@ document.addEventListener("DOMContentLoaded", () => {
     tempValue.textContent = `${data.temperature?.toFixed(2) ?? "-"} °C`;
     spValue.textContent = `${data.setpoint?.toFixed(2) ?? "-"} °C`;
     pwmValue.textContent = data.pwm_output !== undefined ? data.pwm_output.toFixed(0) : "-";
-    timeValue.textContent = `${data.elapsed_time ?? "-"} s`;
+    timeValue.textContent = `${data.elapsed_time?.toFixed(1) ?? "-"} s`;
 
       // --- PENAMBAHAN: Update kartu metrik performa ---
     riseTimeValue.textContent = `${data.rise_time?.toFixed(2) ?? "-"} s`;
@@ -175,18 +175,10 @@ document.addEventListener("DOMContentLoaded", () => {
       const tempDataset = tempChart.data.datasets[0].data;
       const spDataset = tempChart.data.datasets[1].data;
 
-      chartLabels.push(data.elapsed_time);
+      chartLabels.push(data.elapsed_time.toFixed(1));
       tempDataset.push(data.temperature);
       spDataset.push(data.setpoint);
       pwmHistory.push(data.pwm_output);
-
-      // Batasi jumlah data poin agar grafik tidak lambat
-      if (chartLabels.length > 100) {
-        chartLabels.shift();
-        tempDataset.shift();
-        spDataset.shift();
-        pwmHistory.shift();
-      }
 
       tempChart.update();
     }
@@ -327,4 +319,5 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
 });
+
 
