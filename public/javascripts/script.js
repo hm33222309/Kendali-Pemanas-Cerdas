@@ -29,6 +29,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const ssErrorValue = document.getElementById("ss-error-value");
   let pwmHistory = [];
   let timeHistoryMs = [];
+  let settingsChanged = false;
   
   // --- Inisialisasi Chart.js ---
   const ctx = document.getElementById("temp-chart").getContext("2d");
@@ -193,6 +194,7 @@ document.addEventListener("DOMContentLoaded", () => {
     tempChart.data.datasets[0].data = [];
     tempChart.data.datasets[1].data = [];
     pwmHistory = [];
+    timeHistoryMs = [];
     tempChart.update();
   }
 
@@ -323,6 +325,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
 });
+
 
 
 
