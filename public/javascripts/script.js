@@ -27,7 +27,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const settlingTimeValue = document.getElementById("settling-time-value");
   const overshootValue = document.getElementById("overshoot-value");
   const ssErrorValue = document.getElementById("ss-error-value");
-
+  let pwmHistory = [];
+  
   // --- Inisialisasi Chart.js ---
   const ctx = document.getElementById("temp-chart").getContext("2d");
   const tempChart = new Chart(ctx, {
@@ -177,12 +178,14 @@ document.addEventListener("DOMContentLoaded", () => {
       chartLabels.push(data.elapsed_time);
       tempDataset.push(data.temperature);
       spDataset.push(data.setpoint);
+      pwmHistory.push(data.pwm_output);
 
       // Batasi jumlah data poin agar grafik tidak lambat
       if (chartLabels.length > 100) {
         chartLabels.shift();
         tempDataset.shift();
         spDataset.shift();
+        pwmHistory.shift();
       }
 
       tempChart.update();
@@ -193,6 +196,7 @@ document.addEventListener("DOMContentLoaded", () => {
     tempChart.data.labels = [];
     tempChart.data.datasets[0].data = [];
     tempChart.data.datasets[1].data = [];
+    pwmHistory = [];
     tempChart.update();
   }
 
@@ -268,14 +272,15 @@ document.addEventListener("DOMContentLoaded", () => {
     const spDataset = tempChart.data.datasets[1].data;
 
     // Header CSV
-    let csv = "Waktu (detik);Suhu Aktual (°C);Setpoint (°C)\n";
+    let csv = "Waktu (detik);Suhu Aktual (°C);Setpoint (°C); PWM\n";
 
     // Gabungkan data menjadi baris CSV
     for (let i = 0; i < chartLabels.length; i++) {
       const waktu = chartLabels[i];
-      const suhu = tempDataset[i] !== undefined ? tempDataset[i] : "";
-      const setpoint = spDataset[i] !== undefined ? spDataset[i] : "";
-      csv += `${waktu};${suhu};${setpoint}\n`;
+      const suhu = tempDataset[i] !== undefined ? tempDataset[i].toFixed(2) : "";
+      const setpoint = spDataset[i] !== undefined ? spDataset[i].toFixed(2) : "";
+      const pwm = pwmHistory[i] !== undefined ? pwmHistory[i].toFixed(0) : "";
+      csv += `${waktu};${suhu};${setpoint};${PWM}\n`;
     }
 
     // Buat blob dan link download
@@ -320,4 +325,5 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("duration").disabled = isRunning;
     document.getElementById("fitness").disabled = isRunning;
   }
+
 });
