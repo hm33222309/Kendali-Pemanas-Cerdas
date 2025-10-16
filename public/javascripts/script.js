@@ -280,7 +280,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const suhu = tempDataset[i] !== undefined ? tempDataset[i].toFixed(2) : "";
       const setpoint = spDataset[i] !== undefined ? spDataset[i].toFixed(2) : "";
       const pwm = pwmHistory[i] !== undefined ? pwmHistory[i].toFixed(0) : "";
-      csv += `${waktu};${suhu};${setpoint};${PWM}\n`;
+      csv += `${waktu};${suhu};${setpoint};${pwm}\n`;
     }
 
     // Buat blob dan link download
@@ -327,3 +327,4 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
 });
+
