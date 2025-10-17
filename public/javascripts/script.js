@@ -28,8 +28,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const overshootValue = document.getElementById("overshoot-value");
   const ssErrorValue = document.getElementById("ss-error-value");
   let pwmHistory = [];
-  let timeHistoryMs = [];
-  let settingsChanged = false;
   
   // --- Inisialisasi Chart.js ---
   const ctx = document.getElementById("temp-chart").getContext("2d");
@@ -141,9 +139,7 @@ document.addEventListener("DOMContentLoaded", () => {
     tempValue.textContent = `${data.temperature?.toFixed(2) ?? "-"} °C`;
     spValue.textContent = `${data.setpoint?.toFixed(2) ?? "-"} °C`;
     pwmValue.textContent = data.pwm_output !== undefined ? data.pwm_output.toFixed(0) : "-";
-    
-    const displayTimeSec = data.elapsed_ms !== undefined ? (data.elapsed_ms / 1000).toFixed(1) : "-";
-    timeValue.textContent = `${displayTimeSec} s`;
+    timeValue.textContent = `${data.elapsed_time ?? "-"} s`;
 
       // --- PENAMBAHAN: Update kartu metrik performa ---
     riseTimeValue.textContent = `${data.rise_time?.toFixed(2) ?? "-"} s`;
@@ -179,11 +175,10 @@ document.addEventListener("DOMContentLoaded", () => {
       const tempDataset = tempChart.data.datasets[0].data;
       const spDataset = tempChart.data.datasets[1].data;
 
-      chartLabels.push(displayTimeSec);
+      chartLabels.push(data.elapsed_time);
       tempDataset.push(data.temperature);
       spDataset.push(data.setpoint);
       pwmHistory.push(data.pwm_output);
-      timeHistoryMs.push(data.elapsed_ms);
 
       tempChart.update();
     }
@@ -325,6 +320,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
 });
+
 
 
 
