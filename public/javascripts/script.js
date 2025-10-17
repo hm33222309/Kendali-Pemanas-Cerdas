@@ -94,6 +94,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   client.on("connect", function () {
     console.log("Terhubung ke MQTT Broker!");
+    console.log(CLIENT_ID);
     mqttStatus.innerHTML = '<span class="dot connected"></span> CONNECTED';
 
     // Subscribe ke topik FEEDBACK (data dari ESP32)
@@ -320,6 +321,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
 });
+
 
 
 
