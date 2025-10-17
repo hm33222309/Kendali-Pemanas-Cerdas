@@ -28,6 +28,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const overshootValue = document.getElementById("overshoot-value");
   const ssErrorValue = document.getElementById("ss-error-value");
   let pwmHistory = [];
+  let settingsChanged = false;
   
   // --- Inisialisasi Chart.js ---
   const ctx = document.getElementById("temp-chart").getContext("2d");
@@ -321,6 +322,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
 });
+
 
 
 
